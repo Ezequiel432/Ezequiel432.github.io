@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f4ff">
+  <meta name="description" content="Una sorpresa hecha con amor para Camila.">
+  <title>Para Camila ♡</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap');
+    :root { --ink:#302442; --muted:#766b83; --purple:#7952a7; --purple-dark:#59377f; --lilac:#eee5fb; --lilac-deep:#d6c2f0; --paper:#fcfaff; --gold:#d6b766; }
+    * { box-sizing:border-box }
+    html { scroll-behavior:smooth }
+    body { margin:0; color:var(--ink); background:var(--paper); font-family:'DM Sans',sans-serif; }
+    body.locked { overflow:hidden }
+    .wizard-scene { position:fixed;inset:0;z-index:30;overflow:hidden;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 40%,#39305e,#17152d 72%);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .35s ease }
+    .wizard-scene.active { opacity:1;visibility:visible }
+    .wizard-moon { position:absolute;width:min(38vw,320px);aspect-ratio:1;border-radius:50%;background:#e9dcbb;opacity:.9;box-shadow:0 0 70px #e9dcbb55;top:9%;right:13% }
+    .wizard-stars { position:absolute;inset:11% 0 auto;text-align:center;color:#f5e8c5;letter-spacing:1em;font-size:clamp(17px,3vw,30px);opacity:.9 }
+    .wizard-castle { position:absolute;bottom:0;left:0;width:100%;height:34%;fill:#100f20;opacity:.92 }
+    .flying-wizard { position:absolute;width:min(60vw,500px);left:-55%;top:38%;filter:drop-shadow(0 8px 18px #d7bdff66) }
+    .wizard-scene.active .flying-wizard { animation:flyAcross 3.2s cubic-bezier(.38,.03,.62,.98) both }
+    .flying-snitch { position:absolute;left:58%;top:25%;width:25px;height:25px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff4bd,#d9a83e 65%,#946b27);box-shadow:0 0 26px #e4bc5d;opacity:0 }
+    .wizard-scene.active .flying-snitch { animation:snitchAppear 2.8s .6s ease-in-out both }
+    .flying-snitch:before,.flying-snitch:after { content:'';position:absolute;top:5px;width:29px;height:15px;border:2px solid #f2dfaa;border-radius:100% 0 100% 0 }
+    .flying-snitch:before {right:18px;transform:rotate(22deg)}.flying-snitch:after{left:18px;transform:scaleX(-1) rotate(22deg)}
+    .flying-snitch span { display:none }
+    .spell-message { position:absolute;bottom:16%;left:50%;transform:translateX(-50%);width:min(92vw,920px);padding:0 12px;text-align:center;color:#fff3d3;font:italic clamp(22px,4.6vw,42px) 'Playfair Display',Georgia,serif;text-shadow:0 0 24px #d4b77e;opacity:0 }
+    .wizard-scene.active .spell-message { animation:messageIn .8s 2.1s ease both }
+    .intro-content { transition:opacity .25s ease,transform .25s ease }
+    .intro-screen.casting .intro-content { opacity:0;transform:scale(.96) }
+    .open-button:disabled { opacity:.6;cursor:default }
+    @keyframes flyAcross { 0%{left:-45%;top:45%;transform:rotate(-8deg) scale(.68)}35%{top:30%;transform:rotate(5deg) scale(.9)}70%{top:42%;transform:rotate(-4deg) scale(1.08)}100%{left:110%;top:28%;transform:rotate(8deg) scale(.85)} }
+    @keyframes snitchAppear { 0%{opacity:0;transform:translateY(24px) rotate(0)}25%,75%{opacity:1}100%{opacity:0;transform:translateY(-32px) rotate(360deg)} }
+    @keyframes messageIn { to{opacity:1;transform:translate(-50%,-8px)} }    .intro-screen { position:fixed; inset:0; z-index:20; display:grid; place-items:center; overflow:hidden; padding:28px; text-align:center; background:radial-gradient(ellipse at 50% 42%,#fff 0,#faf6ff 45%,#e8ddf5 100%); transition:opacity .9s ease,visibility .9s ease; }
+    .intro-screen.dismissed { opacity:0; visibility:hidden; pointer-events:none }
+    .intro-screen:before,.intro-screen:after { content:''; position:absolute; width:340px; height:340px; border:1px solid #9875bd30; border-radius:50%; }
+    .intro-screen:before { top:-210px; left:-130px }.intro-screen:after { bottom:-230px; right:-110px; width:420px;height:420px }
+    .intro-content { position:relative; z-index:2; max-width:640px; animation:arrive 1.2s both }
+    .intro-tulip { width:170px;height:170px; margin:0 auto 15px; color:var(--purple); animation:flowerIn 1.7s cubic-bezier(.2,.8,.2,1) both }
+    .intro-overline,.eyebrow,.kicker { text-transform:uppercase; letter-spacing:.22em; font-size:10px; font-weight:700; color:var(--purple) }
+    .intro-title { font:500 clamp(44px,8vw,72px)/.98 'Playfair Display',Georgia,serif; letter-spacing:-.045em; margin:19px 0 15px }
+    .intro-title em { color:var(--purple);font-weight:500 }
+    .intro-copy { max-width:420px;margin:0 auto 30px;color:var(--muted);font-size:15px;line-height:1.8 }
+    .open-button { display:inline-flex; align-items:center; gap:11px; border:0; border-radius:99px; padding:16px 25px; background:var(--purple); color:#fff; font:600 14px 'DM Sans',sans-serif; cursor:pointer; box-shadow:0 12px 30px #7952a740; transition:transform .22s,background .22s,box-shadow .22s }
+    .open-button:hover { transform:translateY(-3px);background:var(--purple-dark);box-shadow:0 16px 34px #7952a755 }
+    .open-button:focus-visible { outline:3px solid var(--gold);outline-offset:4px }
+    .intro-hint { margin:18px 0 0;font-size:11px;letter-spacing:.08em;color:#9889a6 }
+    .float-petal { position:absolute;color:#9975ba;font:20px Georgia,serif;opacity:.55;animation:drift 5s ease-in-out infinite alternate }
+    .p1{top:23%;left:18%}.p2{top:31%;right:17%;animation-delay:1.2s}.p3{bottom:22%;left:22%;animation-delay:2s}.p4{bottom:28%;right:23%;animation-delay:.5s}
+    .hero { min-height:94svh; position:relative; overflow:hidden; display:grid; place-items:center; text-align:center; padding:90px 24px 70px; background:radial-gradient(ellipse at 50% 45%,#fff 0,#faf7ff 48%,#eee5f8 100%); }
+    .hero:before { content:''; position:absolute; inset:0; opacity:.16; background-image:radial-gradient(#76519d 1px,transparent 1px);background-size:38px 38px;mask-image:linear-gradient(transparent,#000,transparent) }
+    .hero-inner { position:relative;z-index:1;max-width:760px }
+    .hero h1,.intro-title,h2 { font-family:'Playfair Display',Georgia,serif;font-weight:500 }
+    .hero h1 { font-size:clamp(44px,8.6vw,76px);line-height:.98;margin:20px 0 0;letter-spacing:-.045em }
+    .hero h1 em { color:var(--purple);font-weight:500 }
+    .sub { color:var(--muted);line-height:1.85;font-size:clamp(15px,2vw,18px);max-width:490px;margin:24px auto 32px }
+    .button { display:inline-flex;align-items:center;gap:10px;background:var(--purple);color:white;text-decoration:none;border:0;border-radius:99px;padding:15px 24px;font:600 14px 'DM Sans',sans-serif;cursor:pointer;box-shadow:0 10px 25px #7952a730;transition:transform .2s,box-shadow .2s }
+    .button:hover { transform:translateY(-2px);box-shadow:0 13px 28px #7952a745 }
+    .hero-tulip { width:132px;height:132px;color:var(--purple);margin:0 auto;filter:drop-shadow(0 7px 10px #7952a71c) }
+    .scroll { position:absolute;bottom:25px;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#9889a6 }
+    .side-tulip { position:absolute;width:clamp(130px,22vw,250px);opacity:.36;color:var(--purple);pointer-events:none }
+    .side-tulip.left { left:-25px;top:22%;transform:rotate(-26deg) }.side-tulip.right{right:-25px;bottom:10%;transform:rotate(30deg) scaleX(-1)}
+    section.content-section { padding:100px 24px;position:relative;overflow:hidden }
+    .section-inner { max-width:900px;margin:auto;position:relative;z-index:1 }
+    .intro { text-align:center;background:#fff }
+    h2 { font-size:clamp(31px,4.8vw,46px);line-height:1.08;margin:15px 0 20px }
+    .intro p { max-width:620px;margin:0 auto;color:var(--muted);line-height:1.9;font-size:16px }
+    .reasons { background:linear-gradient(135deg,#f5effc,#eee5f8);text-align:center }
+    .cards { display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:42px }
+    .card { padding:28px 22px;text-align:left;background:#fffaf7d9;border:1px solid #fff;border-radius:18px;min-height:170px;box-shadow:0 12px 35px #4b32680b }
+    .card .num { font:italic 23px 'Playfair Display',serif;color:var(--purple) }
+    .card h3 { font:600 16px 'DM Sans',sans-serif;margin:16px 0 8px }
+    .card p { margin:0;font-size:13px;line-height:1.7;color:var(--muted) }
+    .memories { background:#fff;text-align:center }
+    .gallery { display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:38px }
+    .memory-phrase { margin:14px auto 0;color:var(--purple-dark);font:italic 600 clamp(20px,3.5vw,29px) 'Playfair Display',Georgia,serif;line-height:1.35 }
+    .memory { position:relative;margin:0;overflow:hidden;border-radius:16px;background:#f7f2fb;border:1px solid #eee6f5;box-shadow:0 12px 32px #4b32680c }
+    .memory:nth-child(3n + 2) { transform:translateY(18px) }
+    .memory img { display:block;width:100%;height:270px;object-fit:cover;transition:transform .45s }
+    .memory:hover img { transform:scale(1.045) }
+    .memory:nth-child(even) figcaption { background:#fff;border-color:var(--purple);color:var(--purple-dark) }
+    .memory figcaption { position:absolute;left:50%;bottom:15px;transform:translateX(-50%);min-width:0;padding:8px 13px;border-radius:999px;background:var(--purple-dark);border:2px solid #fff;color:#fff;font:600 clamp(14px,1.5vw,17px) 'DM Sans',sans-serif;letter-spacing:.01em;text-shadow:0 1px 2px #24152e55;box-shadow:0 6px 20px #1b122455 }
+    .letter { text-align:center;background:linear-gradient(135deg,#f5effc,#eee5f8) }
+    .envelope { max-width:620px;margin:36px auto 0;padding:38px 38px 34px;background:#faf7ff;border:1px solid #e5d9f2;border-radius:5px 22px 5px 22px;box-shadow:0 20px 60px #4b32680d;position:relative }
+    .envelope:before { content:'“';position:absolute;top:-24px;left:25px;font:90px Georgia,serif;color:#cbb4e5 }
+    .animated-envelope { min-height:170px;padding:70px 28px 26px;background:linear-gradient(135deg,#e8def3,#d8c7ea);perspective:1100px;transform-style:preserve-3d;box-shadow:0 24px 42px #47305f26;transition:transform .7s ease,box-shadow .7s ease }
+    .animated-envelope.open { transform:translateY(-5px) rotateX(2deg);box-shadow:0 34px 60px #47305f35 }
+    .animated-envelope:before { content:'';position:absolute;z-index:3;top:0;left:0;width:100%;height:92px;background:linear-gradient(145deg,#f3eafb,#cfb9e5);clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:50% 0;transform:translateZ(8px) rotateX(0deg);backface-visibility:hidden;transform-style:preserve-3d;filter:drop-shadow(0 5px 4px #5b417322);transition:transform .85s cubic-bezier(.2,.8,.2,1),filter .6s }
+
+    .animated-envelope:after { content:'';position:absolute;z-index:2;inset:0;background:linear-gradient(135deg,#e0d0ee,#cfb9e5);clip-path:polygon(0 0,50% 58%,100% 0,100% 100%,0 100%);transform:translateZ(4px);filter:drop-shadow(0 7px 5px #5b417322);opacity:1;transition:opacity .55s ease,transform .65s ease }
+
+    .animated-envelope.open:before { transform:translateZ(8px) rotateX(180deg);filter:drop-shadow(0 12px 8px #5b417344) }
+    .animated-envelope.open:after { opacity:0;transform:translateZ(-8px) }
+    .letter-birds { position:absolute;z-index:5;top:-58px;left:0;width:100%;height:115px;pointer-events:none;transform:translateZ(55px) }
+    .letter-birds .bird { position:absolute;width:52px;height:auto;left:-12%;opacity:0 }
+    .bird-one { top:37%;--bird-color:#e98d7a } .bird-two { top:4%;--bird-color:#e4bd58 } .bird-three { top:55%;--bird-color:#a18ac7 }
+    .bird .body { fill:var(--bird-color) }.bird .wing { fill:color-mix(in srgb,var(--bird-color),#fff 18%);transform-box:fill-box;transform-origin:70% 75% }
+    .animated-envelope.open .bird-one { animation:birdFlight 2.8s .05s ease-in-out both }
+    .animated-envelope.open .bird-two { animation:birdFlight 2.8s .35s ease-in-out both }
+    .animated-envelope.open .bird-three { animation:birdFlight 2.8s .65s ease-in-out both }
+    .animated-envelope.open .bird .wing { animation:wingFlap .23s ease-in-out infinite alternate }
+    @keyframes birdFlight { 0%{left:-12%;opacity:0;transform:translateY(16px) rotate(-8deg) scale(.72)}12%{opacity:1}55%{transform:translateY(-24px) rotate(4deg) scale(1)}88%{opacity:1}100%{left:112%;opacity:0;transform:translateY(-42px) rotate(10deg) scale(.92)} }
+    @keyframes wingFlap { to{transform:rotate(-28deg)} }
+    .letter-trigger { position:absolute;z-index:4;top:-24px;left:50%;transform:translateX(-50%);border:0;border-radius:999px;background:var(--purple);color:white;padding:13px 21px;font:600 14px 'DM Sans',sans-serif;white-space:nowrap;cursor:pointer;box-shadow:0 8px 22px #7952a740 }
+    .letter-trigger:hover { background:var(--purple-dark) }
+    .letter-paper { position:relative;z-index:1;max-height:0;overflow:hidden;opacity:0;transform:translateY(42px) translateZ(-16px) rotateX(9deg);transform-origin:50% 100%;padding:0 24px;border:1px solid #e5d9f2;border-radius:10px;background:linear-gradient(145deg,#fff,#fffaf5);box-shadow:0 2px 5px #40304e12;transform-style:preserve-3d;transition:max-height 1s cubic-bezier(.2,.8,.2,1),opacity .55s ease,transform .9s cubic-bezier(.2,.8,.2,1),padding .7s ease,box-shadow .8s ease }
+    .animated-envelope.open .letter-paper { max-height:540px;opacity:1;transform:translateY(-25px) translateZ(28px) rotateX(0deg);padding:27px 24px;box-shadow:0 22px 38px #45325630 }
+    @media(prefers-reduced-motion:reduce) { .animated-envelope.open .letter-birds .bird { animation-duration:.01ms!important;animation-delay:0ms!important }.animated-envelope:before { transition:none } }
+    @media(max-width:650px) { .animated-envelope { padding-left:18px;padding-right:18px }.animated-envelope.open .letter-paper {padding:23px 17px} }
+    .letter-copy { color:#62576b;line-height:1.95;text-align:left;font:16px 'Playfair Display',Georgia,serif }
+    .signature { text-align:right;margin:24px 0 0;color:var(--purple);font:italic 22px 'Playfair Display',serif }
+    .closing { text-align:center;padding:75px 24px 85px;background:#fff;position:relative;overflow:hidden }
+    .closing .heart { color:var(--purple);font-size:35px;animation:beat 1.2s infinite }
+    .closing p { color:var(--muted);font-size:13px;margin:12px 0 0 }
+    footer { text-align:center;padding:22px;font-size:11px;letter-spacing:.08em;color:#806e91;background:#eee5f8 }
+    .tulip-divider { display:flex;align-items:center;justify-content:center;gap:14px;margin:38px auto 0;color:#aa8bc8 }
+    .tulip-divider:before,.tulip-divider:after { content:'';height:1px;width:55px;background:#d9c9e9 }
+    .tulip-divider svg { width:30px;height:30px }
+    @keyframes arrive { from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)} }
+    @keyframes flowerIn { from{opacity:0;transform:scale(.6) rotate(-20deg)}to{opacity:1;transform:scale(1) rotate(0)} }
+    @keyframes drift { to{transform:translateY(-18px) rotate(20deg);opacity:.28} }
+    @keyframes beat { 50%{transform:scale(1.18)} }
+    @media(max-width:850px) { .gallery{grid-template-columns:repeat(2,1fr)} .memory:nth-child(3n + 2){transform:none} }
+    @media(prefers-reduced-motion:reduce) { .flying-wizard,.flying-snitch,.spell-message { animation-duration:.01ms!important;animation-delay:0ms!important } }
+    @media(max-width:650px) { .flying-wizard{width:78vw}.wizard-moon{width:42vw;top:13%;right:9%}.gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.memory img{height:210px}.memory figcaption{font-size:15px;padding:8px 12px;min-width:0}.cards{grid-template-columns:1fr}.card{min-height:0;padding:22px}section.content-section{padding:76px 22px}.envelope{padding:30px 24px}.intro-tulip{width:115px;height:115px}.side-tulip.left{left:-52px}.side-tulip.right{right:-50px} }
+    @media(prefers-reduced-motion:reduce) { *,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important} }
+    .letter-invitation { text-align:center }
+    .letter-teaser { color:var(--muted);font-size:15px;line-height:1.7;margin:0 auto 28px }
+    .closed-letter-button { border:0;background:none;display:grid;justify-items:center;gap:13px;margin:34px auto 0;color:var(--purple-dark);font:600 15px 'DM Sans',sans-serif;cursor:pointer }
+    .closed-envelope { width:min(340px,72vw);height:190px;position:relative;display:grid;place-items:center;border:1px solid #d4c0e9;border-radius:8px;background:linear-gradient(145deg,#f8f1ff,#e2d1f1);box-shadow:0 20px 45px #38205120;perspective:800px;transition:transform .3s,box-shadow .3s }
+    .closed-envelope:before { content:'';position:absolute;inset:0 0 auto;height:58%;background:linear-gradient(145deg,#e6d8f2,#cfbae5);clip-path:polygon(0 0,100% 0,50% 100%);filter:drop-shadow(0 4px 4px #61478022) }
+    .closed-envelope:after { content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 49.5%,#cab3e1 50%,transparent 50.5%),linear-gradient(215deg,transparent 49.5%,#cab3e1 50%,transparent 50.5%);pointer-events:none }
+    .closed-letter-button:hover .closed-envelope { transform:translateY(-5px) rotateX(5deg);box-shadow:0 27px 50px #3820512c }
+    .envelope-heart { position:relative;z-index:2;display:grid;place-items:center;width:43px;height:43px;border-radius:50%;background:var(--purple);color:white;font-size:18px;box-shadow:0 4px 12px #60407a4d }
+    .storybook { position:fixed;inset:0;z-index:60;overflow:hidden;display:grid;place-items:center;background:#94d8f1;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .6s ease,visibility .6s ease }
+    .storybook.active { opacity:1;visibility:visible;pointer-events:auto }
+    .storybook-sky { position:absolute;inset:0;background:linear-gradient(180deg,#84cbea 0%,#bdeafa 56%,#e7f7e7 100%) }
+    .storybook-sun { position:absolute;top:8%;right:14%;width:clamp(72px,11vw,138px);aspect-ratio:1;border-radius:50%;background:#fff1ad;box-shadow:0 0 70px #fff1ad99;animation:sunGlow 4s ease-in-out infinite alternate }
+    .storybook-cloud { position:absolute;top:18%;width:140px;height:40px;border-radius:99px;background:#fffdf5d9;filter:drop-shadow(0 5px 8px #5ca9c522);animation:cloudDrift 24s linear infinite }
+    .storybook-cloud:before,.storybook-cloud:after { content:'';position:absolute;bottom:5px;border-radius:50%;background:inherit }
+    .storybook-cloud:before { left:23px;width:55px;height:55px }.storybook-cloud:after{left:62px;width:43px;height:43px}
+    .cloud-one {left:-180px;top:16%;animation-duration:26s}.cloud-two{left:-220px;top:31%;transform:scale(.7);animation-duration:34s;animation-delay:-12s}.cloud-three{left:-240px;top:9%;transform:scale(.55);animation-duration:39s;animation-delay:-20s}
+    .storybook-hill { position:absolute;left:-15%;width:130%;height:48%;border-radius:50% 50% 0 0 }
+    .hill-back { bottom:-22%;background:#85c77c;transform:rotate(-4deg) }
+    .hill-front { bottom:-32%;left:-23%;width:145%;height:48%;background:linear-gradient(180deg,#62aa68,#3f8956);transform:rotate(3deg) }
+    .storybook-tree { position:absolute;z-index:2;bottom:13%;width:clamp(95px,14vw,175px);filter:drop-shadow(0 8px 10px #285b3a35);animation:treeSway 4s ease-in-out infinite alternate;transform-origin:bottom }
+    .tree-left { left:3% }.tree-right{right:3%;transform:scale(.82);animation-delay:-2s}
+    .storybook-birds { position:absolute;z-index:3;top:14%;left:0;width:100%;height:28%;pointer-events:none }
+    .storybook-bird { position:absolute;width:clamp(38px,6vw,70px);height:auto;opacity:0;filter:drop-shadow(0 3px 5px #3c759033) }
+    .sb-one{top:47%;animation:storybookFlight 8s 0s ease-in-out infinite}.sb-two{top:12%;animation:storybookFlight 9s 1.7s ease-in-out infinite}.sb-three{top:65%;animation:storybookFlight 7.5s 3s ease-in-out infinite}
+    .storybook-animal { position:absolute;z-index:4;bottom:7%;width:clamp(82px,12vw,140px);filter:drop-shadow(0 8px 8px #254d3040);animation:animalHello 2.8s ease-in-out infinite alternate }
+    .bunny {left:16%;animation-delay:-1.4s}.fox{right:15%;bottom:6%;transform:scale(.92)}
+    .storybook-flowers { position:absolute;z-index:3;bottom:1.2%;left:0;width:100%;text-align:center;font-size:clamp(18px,3vw,34px);letter-spacing:.14em;filter:drop-shadow(0 2px 3px #28472a38) }
+    .storybook-letter { position:relative;z-index:8;width:min(590px,90vw);max-height:min(76vh,780px);overflow:auto;padding:clamp(24px,4vw,42px);border:2px solid #d7bd8e;border-radius:8px;background:linear-gradient(135deg,#fffdf6,#f8edcf);box-shadow:0 28px 75px #1d365253,0 0 0 8px #fff9e2aa;opacity:0;transform:translateY(100px) rotateX(32deg) scale(.78);transform-origin:50% 100%;transition:opacity .6s ease,transform 1.1s cubic-bezier(.16,1,.3,1);perspective:1000px }
+    .storybook-letter.revealed { opacity:1;transform:translateY(0) rotateX(0) scale(1) }
+    .storybook-letter-inner { position:relative;border:1px solid #dcc89e;padding:clamp(18px,3vw,31px);background:#fffdf7e8 }
+    .letter-mark { color:#9d6390;font-size:18px;letter-spacing:.2em }
+    .storybook-letter h2 { color:#563b68;font:500 clamp(30px,5vw,43px)/1.1 'Playfair Display',Georgia,serif;margin:12px 0 21px }
+    .storybook-copy { color:#514a4c;text-align:left;font:16px/1.75 'Playfair Display',Georgia,serif }
+    .storybook-copy p { margin:0 0 15px }.storybook-copy p:last-child {margin-bottom:0}
+    .storybook-signature { margin:23px 0 0;text-align:right;color:#735274;font:italic 18px 'Playfair Display',Georgia,serif;line-height:1.6 }
+    .storybook-signature strong {font-size:24px;font-weight:500}
+    .storybook-close { position:absolute;z-index:10;right:18px;top:18px;border:1px solid #fff9;border-radius:999px;padding:11px 17px;background:#fffdf0e8;color:#493d51;font:600 13px 'DM Sans',sans-serif;cursor:pointer;box-shadow:0 4px 14px #17364b22 }
+    @keyframes sunGlow {to{transform:scale(1.06);box-shadow:0 0 95px #fff1adc9}}
+    @keyframes cloudDrift {to{left:110%}}
+    @keyframes treeSway {to{rotate:2deg}}
+    @keyframes storybookFlight {0%{left:-8%;opacity:0;transform:translateY(12px) scale(.8)}12%{opacity:1}50%{transform:translateY(-16px) scale(1)}88%{opacity:1}100%{left:110%;opacity:0;transform:translateY(-5px) scale(.9)}}
+    @keyframes animalHello {to{transform:translateY(-7px) rotate(-2deg)}}
+    @media(max-width:650px) { .storybook-letter{width:92vw;max-height:78vh;padding:18px}.storybook-letter-inner{padding:18px}.storybook-copy{font-size:15px;line-height:1.65}.storybook-animal.bunny{left:1%;width:68px}.storybook-animal.fox{right:1%;width:78px}.storybook-tree.tree-left{left:-38px}.storybook-tree.tree-right{right:-38px}.storybook-close{top:12px;right:12px;padding:9px 12px} }
+    @media(prefers-reduced-motion:reduce) { .storybook *, .closed-envelope { animation:none!important;transition:none!important } }
+    .storybook { transition:opacity .55s ease,visibility .55s ease }
+    .storybook-sky { transform:scale(1.1);opacity:.35;transition:transform 1.4s cubic-bezier(.2,.8,.2,1),opacity .8s ease }
+    .storybook.active .storybook-sky { transform:scale(1);opacity:1 }
+    .storybook-sun { opacity:0;transform:scale(.15) }
+    .storybook.active .storybook-sun { animation:sunBloom 1.15s .15s cubic-bezier(.18,.89,.32,1.28) both,sunGlow 4s 1.3s ease-in-out infinite alternate }
+    .storybook-hill { opacity:0 }
+    .storybook.active .hill-back { animation:hillRise 1.25s .2s cubic-bezier(.2,.8,.2,1) both }
+    .storybook.active .hill-front { animation:hillRiseFront 1.35s .38s cubic-bezier(.2,.8,.2,1) both }
+    .storybook-cloud { opacity:0 }
+    .storybook.active .storybook-cloud { animation:cloudArrive .95s .3s ease-out both,cloudDrift 28s 1.3s linear infinite }
+    .storybook.active .cloud-two { animation-delay:.52s, -10s }.storybook.active .cloud-three { animation-delay:.74s,-19s }
+    .storybook-tree { opacity:0;transform:scaleY(.15) translateY(100px) }
+    .storybook.active .storybook-tree { animation:treeGrow 1s .62s cubic-bezier(.2,.8,.2,1) both,treeSway 4s 1.7s ease-in-out infinite alternate }
+    .storybook.active .tree-right { animation:treeGrowRight 1s .82s cubic-bezier(.2,.8,.2,1) both,treeSway 4s 1.9s ease-in-out infinite alternate }
+    .storybook-bird { opacity:0 }
+    .storybook.active .storybook-bird { animation:storybookFlight 7.5s .2s ease-in-out infinite }
+    .storybook.active .sb-two { animation-delay:1s }.storybook.active .sb-three { animation-delay:2s }
+    .storybook-animal { opacity:0;transform:translateY(70px) scale(.5) }
+    .storybook.active .storybook-animal { animation:animalPop .8s .85s cubic-bezier(.2,.9,.35,1.35) both,animalHello 2.8s 1.8s ease-in-out infinite alternate }
+    .storybook.active .fox { animation:animalPop .85s 1.05s cubic-bezier(.2,.9,.35,1.35) both,foxHello 2.8s 2s ease-in-out infinite alternate }
+    .storybook-flowers { opacity:0;transform:translateY(25px) }
+    .storybook.active .storybook-flowers { animation:flowersGrow .85s 1s ease-out both }
+    .storybook-letter.revealed { animation:letterBloom 1.15s cubic-bezier(.17,.9,.32,1.2) both }
+    .storybook-letter.revealed .letter-mark { animation:inkFade .7s .45s both }
+    .storybook-letter.revealed .storybook-copy { animation:inkFade .9s .65s both }
+    .storybook-letter.revealed .storybook-signature { animation:inkFade .75s 1.15s both }
+    .wand-sweep { position:absolute;z-index:12;left:-36%;top:36%;width:min(42vw,540px);height:auto;opacity:0;pointer-events:none;filter:drop-shadow(0 0 16px #fff4b8) }
+    .wand-glow { fill:none;stroke:#fff8cf;stroke-width:4;stroke-linecap:round;stroke-dasharray:300;stroke-dashoffset:300 }
+    .wand-stick { fill:none;stroke:#67442e;stroke-width:8;stroke-linecap:round }
+    .wand-tip { fill:none;stroke:#fff7be;stroke-width:4;stroke-linecap:round;filter:drop-shadow(0 0 6px #fff5a8) }
+    .storybook.returning { animation:sceneReturn 1.2s ease-in both }
+    .storybook.returning .wand-sweep { animation:wandSweep 1.05s cubic-bezier(.3,.75,.25,1) both }
+    .storybook.returning .storybook-letter { animation:letterFold .65s ease-in both }
+    .storybook.returning .storybook-close { opacity:0;pointer-events:none }
+    .storybook.returning .storybook-bird,.storybook.returning .storybook-animal { animation-play-state:paused }
+    @keyframes sunBloom {0%{opacity:0;transform:scale(.15)}100%{opacity:1;transform:scale(1)}}
+    @keyframes hillRise {from{opacity:0;transform:translateY(100%) rotate(-4deg)}to{opacity:1;transform:translateY(0) rotate(-4deg)}}
+    @keyframes hillRiseFront {from{opacity:0;transform:translateY(100%) rotate(3deg)}to{opacity:1;transform:translateY(0) rotate(3deg)}}
+    @keyframes cloudArrive {from{opacity:0;translate:-15px 12px}to{opacity:1;translate:0 0}}
+    @keyframes treeGrow {from{opacity:0;transform:scaleY(.1) translateY(100px)}to{opacity:1;transform:scaleY(1) translateY(0)}}
+    @keyframes treeGrowRight {from{opacity:0;transform:scale(.4,.1) translateY(100px)}to{opacity:1;transform:scale(.82, .82) translateY(0)}}
+    @keyframes animalPop {0%{opacity:0;transform:translateY(70px) scale(.45)}75%{opacity:1;transform:translateY(-13px) scale(1.04)}100%{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes foxHello {to{transform:translateY(-7px) rotate(-2deg) scale(.92)}}
+    @keyframes flowersGrow {to{opacity:1;transform:translateY(0)}}
+    @keyframes letterBloom {0%{opacity:0;transform:translateY(120px) rotateX(38deg) scale(.72)}70%{opacity:1;transform:translateY(-8px) rotateX(-2deg) scale(1.02)}100%{opacity:1;transform:translateY(0) rotateX(0) scale(1)}}
+    @keyframes inkFade {from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes wandSweep {0%{opacity:0;left:-36%;top:43%;transform:rotate(-20deg) scale(.7)}18%{opacity:1}70%{opacity:1;left:55%;top:34%;transform:rotate(8deg) scale(1.1)}100%{opacity:0;left:112%;top:27%;transform:rotate(18deg) scale(.85)}}
+    @keyframes sceneReturn {65%{opacity:1;filter:brightness(1.35)}100%{opacity:0;filter:brightness(1.8);visibility:hidden}}
+    @keyframes letterFold {to{opacity:0;transform:translateY(80px) rotateX(35deg) scale(.75)}}
+    .storybook-sparkles { position:absolute;inset:0;z-index:2;pointer-events:none;color:#fff5c9;text-shadow:0 0 12px #fff4b5 }
+    .storybook-sparkles span {position:absolute;opacity:0;animation:sparkTwinkle 2.8s ease-in-out infinite}
+    .spark-a{left:15%;top:24%;font-size:25px;animation-delay:.2s!important}.spark-b{left:32%;top:11%;font-size:19px;animation-delay:1.1s!important}.spark-c{right:29%;top:34%;font-size:27px;animation-delay:.7s!important}.spark-d{right:12%;top:42%;font-size:22px;animation-delay:1.5s!important}.spark-e{left:8%;top:49%;font-size:18px;animation-delay:1.9s!important}.spark-f{right:40%;top:15%;font-size:17px;animation-delay:.5s!important}.spark-g{left:45%;top:39%;font-size:24px;animation-delay:1.3s!important}
+    .storybook.active .storybook-sparkles span {animation-name:sparkTwinkle}
+    .storybook-castle {position:absolute;z-index:1;left:50%;bottom:23%;width:clamp(230px,36vw,470px);height:auto;opacity:0;transform:translateX(-50%) translateY(35px) scale(.82);filter:drop-shadow(0 0 25px #fff0c477)}
+    .storybook.active .storybook-castle {animation:castleRise 1.15s .48s cubic-bezier(.2,.8,.2,1) both,castleShimmer 4s 1.8s ease-in-out infinite alternate}
+    .castle-glow {fill:none;stroke:#fff2bf;stroke-width:10;stroke-linecap:round;filter:blur(8px);opacity:.7}
+    .storybook-fireflies {position:absolute;z-index:4;inset:55% 0 5%;pointer-events:none}
+    .storybook-fireflies i {position:absolute;width:7px;height:7px;border-radius:50%;background:#fff3ad;box-shadow:0 0 13px 4px #fff0a899;opacity:0}
+    .storybook-fireflies i:nth-child(1){left:13%;top:50%;--fly-x:18px;--fly-y:-28px}.storybook-fireflies i:nth-child(2){left:27%;top:30%;--fly-x:-12px;--fly-y:-24px}.storybook-fireflies i:nth-child(3){left:39%;top:68%;--fly-x:19px;--fly-y:-35px}.storybook-fireflies i:nth-child(4){left:54%;top:37%;--fly-x:-15px;--fly-y:-30px}.storybook-fireflies i:nth-child(5){left:69%;top:56%;--fly-x:12px;--fly-y:-37px}.storybook-fireflies i:nth-child(6){left:82%;top:35%;--fly-x:-19px;--fly-y:-23px}.storybook-fireflies i:nth-child(7){left:92%;top:65%;--fly-x:16px;--fly-y:-28px}.storybook-fireflies i:nth-child(8){left:21%;top:80%;--fly-x:-12px;--fly-y:-34px}.storybook-fireflies i:nth-child(9){left:74%;top:82%;--fly-x:15px;--fly-y:-24px}.storybook-fireflies i:nth-child(10){left:47%;top:18%;--fly-x:-17px;--fly-y:-31px}
+    .storybook.active .storybook-fireflies i {animation:fireflyFloat 3.2s ease-in-out infinite alternate}
+    .storybook.active .storybook-fireflies i:nth-child(2n){animation-delay:.8s}.storybook.active .storybook-fireflies i:nth-child(3n){animation-delay:1.4s}
+    .storybook-dust {position:absolute;z-index:6;inset:12% 0 23%;width:100%;height:65%;pointer-events:none;overflow:visible}
+    .storybook-dust path {fill:none;stroke:#fff0ad;stroke-width:3;stroke-linecap:round;stroke-dasharray:1400;stroke-dashoffset:1400;opacity:0;filter:drop-shadow(0 0 8px #fff3a3)}
+    .storybook.active .storybook-dust path {animation:dustDraw 2.8s .7s ease-out forwards}
+    @keyframes sparkTwinkle {0%,100%{opacity:0;transform:scale(.55) rotate(0)}50%{opacity:.95;transform:scale(1.25) rotate(25deg)}}
+    @keyframes castleRise {to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
+    @keyframes castleShimmer {to{filter:drop-shadow(0 0 36px #fff0c4aa)}}
+    @keyframes fireflyFloat {0%{opacity:0;transform:translate(0,0) scale(.5)}35%{opacity:.95}100%{opacity:.2;transform:translate(var(--fly-x),var(--fly-y)) scale(1.25)}}
+    @keyframes dustDraw {0%{opacity:0;stroke-dashoffset:1400}15%{opacity:.9}100%{opacity:.35;stroke-dashoffset:0}}
+    .love-check { text-align:center;background:linear-gradient(135deg,#f5effc,#eee5f8) }
+    .love-question-card { max-width:680px;margin:35px auto 0;padding:clamp(25px,5vw,48px) 20px 20px;border:1px solid #fff;border-radius:24px;background:#fffdfb;box-shadow:0 24px 60px #51366e12;position:relative }
+    .question-heart { display:grid;place-items:center;margin:-8px auto 14px;width:48px;height:48px;border-radius:50%;background:#f4ecfc;color:var(--purple);font-size:26px }
+    .love-question-card h2 { margin:0 0 10px;font-size:clamp(28px,4.6vw,42px) }
+    .love-question-card p {color:var(--muted);font-size:14px;line-height:1.7;margin:0 auto}
+    .answer-area { position:relative;width:min(100%,360px);height:105px;margin:18px auto 0 }
+    .answer-button { position:absolute;top:50%;transform:translate(-50%,-50%);min-width:88px;border:0;border-radius:999px;padding:12px 20px;font:600 15px 'DM Sans',sans-serif;cursor:pointer;box-shadow:0 8px 20px #51366e18;transition:left .2s ease,top .2s ease,transform .2s ease,opacity .25s ease }
+    .answer-yes {left:38%;background:var(--purple);color:#fff}.answer-yes:hover{transform:translate(-50%,-50%) scale(1.06);background:var(--purple-dark)}
+    .answer-no {left:64%;background:#f2edf7;color:var(--purple-dark);border:1px solid #d7c6e8}
+    .answer-no.vanishing {opacity:0;transform:translate(-50%,-50%) scale(.65);pointer-events:none}
+    .answer-message {min-height:25px;color:var(--purple-dark)!important;font:italic 18px 'Playfair Display',Georgia,serif!important;margin:0 auto!important}
+    .heart-burst { position:absolute;inset:-38px 0 0;z-index:5;overflow:visible;pointer-events:none }
+    .heart-burst span { position:absolute;left:var(--x);bottom:10%;font-size:var(--size);color:var(--heart-color);opacity:0;text-shadow:0 4px 12px #a94f8d55 }
+    .heart-burst.active span { animation:heartFloat var(--duration) var(--delay) cubic-bezier(.18,.72,.26,1) both }
+    @keyframes heartFloat {0%{opacity:0;transform:translate(0,22px) scale(.25) rotate(-18deg)}15%{opacity:1;transform:translate(0,0) scale(1.1) rotate(8deg)}75%{opacity:.9}100%{opacity:0;transform:translate(var(--drift),-190px) scale(.75) rotate(25deg)}}
+  </style>
+</head>
+<body class="locked">
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="tulip" viewBox="0 0 140 150">
+      <g fill="none" stroke="#648160" stroke-width="4" stroke-linecap="round"><path d="M45 143c0-29-5-55-13-77"/><path d="M69 145c0-34 0-61 1-86"/><path d="M94 143c-1-29 5-53 14-75"/></g>
+      <g fill="#89a276"><path d="M43 117c-16-10-27-7-35 4 15 9 27 7 35-4Z"/><path d="M72 126c15-13 27-12 36-2-14 12-26 13-36 2Z"/><path d="M96 111c13-13 25-13 35-5-12 14-24 16-35 5Z"/></g>
+      <g stroke="#fff" stroke-opacity=".7" stroke-width="1.6"><path fill="#d94d5d" d="M25 66c-8-12-7-29 1-40 5-7 12-2 13 9 4-13 12-19 18-11 9 12 4 30-9 42-7 6-16 6-23 0Z"/><path fill="#f0c84a" d="M57 57c-9-14-7-32 2-43 6-7 13-1 13 11 5-13 14-18 20-9 8 13 2 32-12 43-8 6-17 5-23-2Z"/><path fill="#e98570" d="M91 67c-8-12-7-29 1-40 5-7 12-2 13 9 4-13 12-19 18-11 9 12 4 30-9 42-7 6-16 6-23 0Z"/></g>
+    </symbol>
+  </svg>
+  <div class="intro-screen" id="introScreen" role="dialog" aria-modal="true" aria-labelledby="introTitle">
+    <span class="float-petal p1">✧</span><span class="float-petal p2">✦</span><span class="float-petal p3">✧</span><span class="float-petal p4">✿</span>
+    <div class="intro-content">
+      <svg class="intro-tulip" aria-hidden="true"><use href="#tulip"/></svg>
+      <div class="intro-overline">Un guiño al mundo de Harry Potter</div>
+      <h1 class="intro-title" id="introTitle">Hola,<br><em>mi amor</em></h1>
+      <p class="intro-copy">Preparé algo chiquito para recordarte lo mucho que te quiero. ¿Lo abrís?</p>
+      <button class="open-button" id="openGift" type="button">Ver mi regalo <span aria-hidden="true">✧</span></button>
+      <p class="intro-hint">Tocá y mirá lo que aparece</p>
+    </div>
+  </div>
+  <div class="wizard-scene" id="wizardScene" aria-hidden="true">
+    <div class="wizard-moon"></div><div class="wizard-stars">✦　·　✧　　 ·　✦　　✧</div>
+    <svg class="wizard-castle" viewBox="0 0 1000 240" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><path d="M0 240V185h60v-45h45v45h35V95h22V45h20v50h20v90h42V128h27V70h18V34h20v36h21v58h40v52h46V105h24V55h20V20h24v35h23v50h36v77h35V140h30v-72h20V40h18v28h21v72h38v50h45V96h20V56h24V28h18v28h25v40h44v89h50v-39h37v39h41v-55h30v55h50v55Z"/></svg>
+    <svg class="flying-wizard" viewBox="0 0 280 170" aria-label="Un joven mago vuela en su escoba">
+      <path class="broom" d="M45 128c55 5 129 8 205 24m-190-28-20 30m26-30-8 34m15-33 1 35m13-34 10 33m169-7c-12-6-20-8-30-9" fill="none" stroke="#98633a" stroke-width="7" stroke-linecap="round"/>
+      <path d="M91 91c-9-30 13-57 44-57 32 0 49 24 41 52l-18 18-49-1Z" fill="#efc6a0"/><path d="M79 60c16-38 74-50 108-13l-18 5c-16-10-45-10-71 10Z" fill="#1d1930"/><path d="m106 106-17 13 46 10 38-14-18-16Z" fill="#252039"/><path d="m108 108-35 8-21 19 48 7 41-13-1-12Z" fill="#30304f"/><path d="m110 119-20 28 52 1 6-30Z" fill="#24213a"/><path d="M118 79a13 13 0 1 0 26 0 13 13 0 1 0-26 0Zm29 0a13 13 0 1 0 26 0 13 13 0 1 0-26 0Z" fill="none" stroke="#26213a" stroke-width="4"/><path d="M142 79h6m-24-27-5 9 7-2" fill="none" stroke="#9a3a46" stroke-width="3" stroke-linecap="round"/><path d="m156 94 8 2" stroke="#8e4d42" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <div class="flying-snitch"><span>✦</span></div><div class="spell-message">Accio, Camila: vení a descubrir cuánto te quiero.</div>
+  </div>  <main id="gift" aria-hidden="true">
+    <section class="hero" aria-labelledby="title">
+      <svg class="side-tulip left" aria-hidden="true"><use href="#tulip"/></svg><svg class="side-tulip right" aria-hidden="true"><use href="#tulip"/></svg>
+      <div class="hero-inner">
+        <svg class="hero-tulip" aria-hidden="true"><use href="#tulip"/></svg>
+        <div class="eyebrow">Un pequeño regalo para vos</div>
+        <h1 id="title">Camila,<br><em>mi persona favorita</em></h1>
+        <p class="sub">Hay cosas que quiero decirte todos los días. Hoy quise juntarlas en un lugarcito hecho especialmente para vos.</p>
+        <a class="button" href="#carta">Empezar la aventura <span aria-hidden="true">✧</span></a>
+      </div>
+      <div class="scroll">Hecho con amor · ↓</div>
+    </section>
+    <section class="content-section intro">
+      <svg class="side-tulip left" aria-hidden="true"><use href="#tulip"/></svg>
+      <div class="section-inner"><div class="kicker">Lo lindo de encontrarte</div><h2>Mi mundo es más lindo<br>desde que estás en él.</h2><p>No hace falta que pase algo extraordinario para que seas mi día favorito. A veces alcanza con una charla, una mirada o simplemente saber que estás ahí.</p><div class="tulip-divider"><svg aria-hidden="true"><use href="#tulip"/></svg></div></div>
+    </section>
+    <section class="content-section reasons">
+      <svg class="side-tulip right" aria-hidden="true"><use href="#tulip"/></svg>
+      <div class="section-inner"><div class="kicker">Podría hacer una lista infinita</div><h2>Tres cosas que me enamoran de vos</h2>
+        <div class="cards"><article class="card"><div class="num">01</div><h3>Tus ojos</h3><p>Me encanta mirarlos y encontrar en ellos tanta ternura.</p></article><article class="card"><div class="num">02</div><h3>Tu sonrisa</h3><p>Con verla, hasta el día más simple se vuelve especial.</p></article><article class="card"><div class="num">03</div><h3>Tu hermosa personalidad</h3><p>Tu forma de ser hace que todo a tu alrededor se sienta más lindo.</p></article></div>
+        <div class="tulip-divider"><svg aria-hidden="true"><use href="#tulip"/></svg></div>
+      </div>
+    </section>
+    <section class="content-section love-check" id="pregunta">
+      <div class="section-inner"><div class="kicker">Una pregunta muy seria</div><div class="love-question-card"><span class="question-heart" aria-hidden="true">♡</span><h2>¿Vos me querés de verdad?</h2><p>Elegí con cuidado… el botón de «No» es medio tímido.</p><div class="answer-area" id="answerArea"><button class="answer-button answer-yes" id="answerYes" type="button">¡Sí! ♡</button><button class="answer-button answer-no" id="answerNo" type="button" aria-label="No (este botón se escapa)">No</button></div><p class="answer-message" id="answerMessage" aria-live="polite"></p><div class="heart-burst" id="heartBurst" aria-hidden="true"></div></div></div>
+    </section>    <section class="content-section memories" id="recuerdos">
+      <div class="section-inner"><div class="kicker">Nuestros momentos</div><h2>Un pedacito de nuestra historia</h2><p class="memory-phrase">Vos hacés que cada instante sea inolvidable.</p><p class="sub">Cada foto aporta una palabra ♡</p>
+        <div class="gallery">
+          <figure class="memory"><img src="fotos/recuerdo-1.jpg" alt="Un momento juntos, acurrucados" loading="lazy"><figcaption>Vos</figcaption></figure>
+          <figure class="memory"><img src="fotos/recuerdo-2.jpg" alt="Camila y su amor compartiendo una salida" loading="lazy"><figcaption>hacés</figcaption></figure>
+          <figure class="memory"><img src="fotos/recuerdo-3.jpg" alt="Una selfie de los dos" loading="lazy"><figcaption>que</figcaption></figure>
+          <figure class="memory"><img src="fotos/recuerdo-4.jpg" alt="Un beso entre los dos" loading="lazy"><figcaption>cada</figcaption></figure>
+          <figure class="memory"><img src="fotos/recuerdo-5.jpg" alt="Los dos juntos frente a una fuente" loading="lazy"><figcaption>instante</figcaption></figure>
+          <figure class="memory"><img src="fotos/recuerdo-6.jpg" alt="Camila disfrutando un mate" loading="lazy"><figcaption>sea</figcaption></figure>
+          <figure class="memory"><img src="fotos/recuerdo-7.jpg" alt="Los dos sonriendo juntos" loading="lazy"><figcaption>inolvidable.</figcaption></figure>
+        </div>
+      </div>
+    </section>    <section class="content-section letter" id="carta">
+      <div class="section-inner letter-invitation"><div class="kicker">Un rincón solo para vos</div><h2>Una carta para Camila</h2><p class="letter-teaser">Preparé unas palabras para vos. Tocá el sobre para abrirlo.</p><button class="closed-letter-button" id="openLetter" type="button" aria-haspopup="dialog"><span class="closed-envelope" aria-hidden="true"><span class="envelope-heart">♥</span></span><span>Abrir la carta</span></button></div>
+    </section>
+    <section class="closing"><svg class="side-tulip left" aria-hidden="true"><use href="#tulip"/></svg><div class="heart" aria-label="corazón">♥</div><h2>Esto recién empieza</h2><p>Y mi parte favorita es que lo seguimos escribiendo juntos.</p></section>
+  </main>
+  <div class="storybook" id="storybook" aria-hidden="true">
+    <div class="storybook-sky"></div><div class="storybook-sun"></div><div class="storybook-sparkles" aria-hidden="true"><span class="spark-a">✧</span><span class="spark-b">✦</span><span class="spark-c">✧</span><span class="spark-d">✦</span><span class="spark-e">✧</span><span class="spark-f">✦</span><span class="spark-g">✧</span></div>
+    <div class="storybook-cloud cloud-one"></div><div class="storybook-cloud cloud-two"></div><div class="storybook-cloud cloud-three"></div>
+    <div class="storybook-hill hill-back"></div><div class="storybook-hill hill-front"></div><svg class="storybook-castle" viewBox="0 0 420 250" aria-label="Un castillo encantado a lo lejos"><path class="castle-glow" d="M36 224h350"/><path fill="#f8eff9" d="M73 224v-91h50V91l31 18V82h35V51h42v52l31-18v24h52v115Z"/><path fill="#e5d4ef" d="M73 133h50v91H73Zm116-51h42v142h-42Zm83 57h52v85h-52Z"/><path fill="#a875b3" d="m61 134 37-60 38 60Zm59-25 50-49 48 49Zm67-27 24-63 25 63Zm49 24 44-46 44 46Zm44 29 31-52 33 52Z"/><path fill="#f5d68e" d="M86 151h13v20H86Zm27 0h13v20h-13Zm67-17h13v22h-13Zm26 0h13v22h-13Zm27 0h13v22h-13Zm42 17h13v20h-13Zm27 0h13v20h-13Z"/><path fill="#9f75aa" d="M181 224v-39q0-30 20-30t20 30v39Z"/><path fill="#edc565" d="M198 198h8v15h-8Z"/><path fill="#b8799b" d="M103 73V43h-5V27l7-12 7 12v16h-5v30Zm118-64h6V0h-6Zm64 54V38h-5V24l7-11 7 11v14h-5v25Z"/><path fill="#f0c96e" d="M101 46h4v6h-4Zm118-27h6v6h-6Zm63 29h5v6h-5Z"/><path d="M132 128h0" stroke="#fff" stroke-width="3"/></svg><div class="storybook-fireflies" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><svg class="storybook-dust" viewBox="0 0 1200 400" preserveAspectRatio="none" aria-hidden="true"><path d="M-20 270C170 70 325 350 505 190S820 60 960 205s180 95 270-15"/></svg>
+    <svg class="storybook-tree tree-left" viewBox="0 0 160 250" aria-hidden="true"><path d="M70 240h24V95H70Z" fill="#815139"/><path d="M82 4 20 91h124ZM82 48 8 151h148ZM82 100 0 205h160Z" fill="#43875a"/><path d="M40 93h80M31 151h102" stroke="#78ad6c" stroke-width="5"/></svg>
+    <svg class="storybook-tree tree-right" viewBox="0 0 160 250" aria-hidden="true"><path d="M70 240h24V95H70Z" fill="#815139"/><path d="M82 4 20 91h124ZM82 48 8 151h148ZM82 100 0 205h160Z" fill="#4c8e5d"/><path d="M40 93h80M31 151h102" stroke="#82b874" stroke-width="5"/></svg>
+    <div class="storybook-birds" aria-hidden="true"><svg class="storybook-bird sb-one" viewBox="0 0 70 40"><path d="M4 22c15-19 24-16 31 0 7-16 17-19 31 0-16-9-24-6-31 9-7-15-16-18-31-9Z" fill="#fffaf1"/><circle cx="35" cy="22" r="3" fill="#d8a75c"/></svg><svg class="storybook-bird sb-two" viewBox="0 0 70 40"><path d="M4 22c15-19 24-16 31 0 7-16 17-19 31 0-16-9-24-6-31 9-7-15-16-18-31-9Z" fill="#fffaf1"/><circle cx="35" cy="22" r="3" fill="#d8a75c"/></svg><svg class="storybook-bird sb-three" viewBox="0 0 70 40"><path d="M4 22c15-19 24-16 31 0 7-16 17-19 31 0-16-9-24-6-31 9-7-15-16-18-31-9Z" fill="#fffaf1"/><circle cx="35" cy="22" r="3" fill="#d8a75c"/></svg></div>
+    <svg class="storybook-animal bunny" viewBox="0 0 120 150" aria-label="Un conejito de cuento"><ellipse cx="47" cy="39" rx="13" ry="36" fill="#fff7ed" transform="rotate(-12 47 39)"/><ellipse cx="74" cy="35" rx="12" ry="34" fill="#fff7ed" transform="rotate(10 74 35)"/><ellipse cx="47" cy="40" rx="6" ry="24" fill="#e8a2a7"/><ellipse cx="74" cy="36" rx="5" ry="23" fill="#e8a2a7"/><ellipse cx="60" cy="111" rx="38" ry="34" fill="#fff7ed"/><circle cx="60" cy="73" r="31" fill="#fff7ed"/><circle cx="49" cy="69" r="3" fill="#443b47"/><circle cx="70" cy="69" r="3" fill="#443b47"/><ellipse cx="60" cy="80" rx="5" ry="4" fill="#e68c93"/><path d="M60 84q-6 7-11 0m11 0q6 7 11 0" fill="none" stroke="#7c5960" stroke-width="2" stroke-linecap="round"/><circle cx="40" cy="80" r="7" fill="#f4b8b4" opacity=".65"/><circle cx="80" cy="80" r="7" fill="#f4b8b4" opacity=".65"/></svg>
+    <svg class="storybook-animal fox" viewBox="0 0 150 140" aria-label="Un zorrito de cuento"><path d="M104 97c22-8 37 0 34 20-2 14-18 18-31 8-12-9-17-18-25-22Z" fill="#df8655"/><path d="M126 105q17-1 14 12-8 10-20 3Z" fill="#fff0d7"/><path d="m38 59 2-36 30 24 25-25 8 41-5 42c-3 20-21 31-43 26-20-4-31-20-27-39Z" fill="#e58c57"/><path d="m42 47 2-17 15 15Zm40-2 12-15 3 22Z" fill="#f5c9b5"/><path d="M43 78q25-24 52 0l-10 17q-16 14-32 0Z" fill="#fff4e2"/><circle cx="57" cy="68" r="3" fill="#3b3038"/><circle cx="82" cy="68" r="3" fill="#3b3038"/><path d="m66 81 6 4 6-4-6-5Z" fill="#49343b"/><path d="M67 86q5 6 10 0" fill="none" stroke="#77525a" stroke-width="2" stroke-linecap="round"/></svg>
+    <div class="storybook-flowers" aria-hidden="true">🌷　✿　🌼　✿　🌷　✿　🌼　✿　🌷</div>
+    <article class="storybook-letter" id="storybookLetter" role="dialog" aria-modal="true" aria-labelledby="storybookTitle">
+      <div class="storybook-letter-inner"><div class="letter-mark">✿　♡　✿</div><h2 id="storybookTitle">Para mi amor</h2><div class="storybook-copy">
+        <p>Para vos, mi amor:</p>
+        <p>Sé que pasaste por momentos difíciles y que algunas experiencias pudieron lastimarte o hacerte desconfiar. No quiero pedirte que olvides lo que viviste, y sé que no puedo prometerte que todos nuestros días vayan a ser felices. Pero sí quiero que, con el tiempo y con mis acciones, sientas que conmigo tenés un amor distinto: paciente, sincero y lleno de respeto.</p>
+        <p>Te amo muchísimo y admiro todo lo que sos. Admiro cuánto te esforzás por tu carrera, la pasión que ponés en cada proyecto y esas noches en las que te desvelás creando vestidos y ropa. Aunque a veces estés cansada, seguís adelante, y eso habla de tu talento, tu dedicación y la fuerza que llevás dentro. Estoy muy orgulloso de vos, mi mujer.</p>
+        <p>Quiero acompañarte en tus sueños, celebrar cada paso que des y recordarte lo mucho que valés. Quiero caminar a tu lado y quererte tal como sos. Cuando te trasnoches, quiero estar ahí acompañándote: cebándote unos mates o tomando uno de tus tés, aunque seguro al final me quede dormido antes que vos.</p>
+        <p>También quiero que siempre podamos hablar con confianza, escucharnos de verdad y contarnos lo que sentimos, incluso cuando algo nos cueste. Para mí, la comunicación es muy importante: quiero que podamos resolver las cosas juntos, con paciencia, sinceridad y ganas de entendernos.</p>
+        <p>Y quiero estar con vos en tus días malos, mi amor. Acompañarte cuando estés triste, cansada o sientas que todo pesa un poco más. Para mí, el amor también se demuestra estando presente, escuchándote y haciéndote sentir que no tenés que pasar por todo sola. Quiero que puedas contar conmigo, en los días lindos y también en los difíciles.</p>
+        <p>Gracias por ser tan especial y por dejarme quererte. Deseo mucho tener el privilegio de llamarte mi mujer y demostrarte, día a día, que todo lo que te digo es sincero.</p>
+      </div><div class="storybook-signature">Con todo mi amor,<br><strong>Ezequiel</strong> ♡</div></div>
+    </article>
+    <svg class="wand-sweep" viewBox="0 0 260 100" aria-hidden="true"><path class="wand-glow" d="M8 66C75 8 160 16 248 52"/><path class="wand-stick" d="m42 75 153-53"/><path class="wand-tip" d="m195 22 13-12m-7 22 17-1m-28-7 2-16"/></svg>
+    <button class="storybook-close" id="closeStorybook" type="button">Volver al inicio</button>
+  </div>
+  <footer>Hecho especialmente para Camila · con amor</footer>
+  <script>
+    const openButton = document.getElementById('openGift');
+    const introScreen = document.getElementById('introScreen');
+    const gift = document.getElementById('gift');
+    const letterButton = document.getElementById('openLetter');
+    const storybook = document.getElementById('storybook');
+    const storybookLetter = document.getElementById('storybookLetter');
+    const closeStorybook = document.getElementById('closeStorybook');
+    letterButton.addEventListener('click', () => {
+      storybook.classList.add('active');
+      storybook.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('locked');
+      window.setTimeout(() => storybookLetter.classList.add('revealed'), 250);
+    });
+    closeStorybook.addEventListener('click', () => {
+      storybook.classList.add('returning');
+      closeStorybook.disabled = true;
+      window.setTimeout(() => {
+        storybookLetter.classList.remove('revealed');
+        storybook.classList.remove('active', 'returning');
+        storybook.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('locked');
+        window.scrollTo({top:0,behavior:'smooth'});
+        closeStorybook.disabled = false;
+        document.querySelector('.hero .button').focus({preventScroll:true});
+      }, 1250);
+    });
+    const answerArea = document.getElementById('answerArea');
+    const answerNo = document.getElementById('answerNo');
+    const answerYes = document.getElementById('answerYes');
+    const answerMessage = document.getElementById('answerMessage');
+    const heartBurst = document.getElementById('heartBurst');
+    let escapeCount = 0;
+    let lastEscapeAt = 0;
+    const runAway = (event) => {
+      const now = Date.now();
+      if (now - lastEscapeAt < 180 || answerNo.hidden) return;
+      lastEscapeAt = now;
+      if (event.type === 'pointerdown') event.preventDefault();
+      escapeCount += 1;
+      const bounds = answerArea.getBoundingClientRect();
+      const maxX = Math.max(44, bounds.width - answerNo.offsetWidth / 2);
+      const maxY = Math.max(40, bounds.height - answerNo.offsetHeight / 2);
+      const x = answerNo.offsetWidth / 2 + Math.random() * (maxX - answerNo.offsetWidth / 2);
+      const y = answerNo.offsetHeight / 2 + Math.random() * (maxY - answerNo.offsetHeight / 2);
+      answerNo.style.left = x + 'px';
+      answerNo.style.top = y + 'px';
+      answerNo.style.transform = 'translate(-50%,-50%) rotate(' + (Math.random() * 18 - 9) + 'deg)';
+      if (escapeCount >= 5) {
+        answerNo.classList.add('vanishing');
+        answerMessage.textContent = 'Jajaja, el «No» se rindió. ¡Sabía que ibas a decir que sí! 💜';
+        window.setTimeout(() => { answerNo.hidden = true; }, 260);
+      } else {
+        answerMessage.textContent = ['¡Uy, casi!','No se deja atrapar…','Ese «No» tiene miedo 😄','¡Se escapó otra vez!'][Math.min(escapeCount - 1, 3)];
+      }
+    };
+    answerNo.addEventListener('pointerenter', runAway);
+    answerNo.addEventListener('pointerdown', runAway);
+    answerNo.addEventListener('focus', runAway);
+    answerNo.addEventListener('click', runAway);
+    answerYes.addEventListener('click', () => {
+      answerMessage.textContent = '¡Sabía que sí! 💜 Te quiero muchísimo.';
+      answerYes.textContent = '¡Yo también te quiero! ♡';
+      heartBurst.innerHTML = '';
+      const heartColors = ['#c34f83', '#8955b0', '#e58eaa', '#d3a53f'];
+      for (let i = 0; i < 18; i += 1) {
+        const heart = document.createElement('span');
+        heart.textContent = '♥';
+        heart.style.setProperty('--x', (4 + Math.random() * 92) + '%');
+        heart.style.setProperty('--size', (15 + Math.random() * 22) + 'px');
+        heart.style.setProperty('--delay', (Math.random() * .65) + 's');
+        heart.style.setProperty('--duration', (1.7 + Math.random() * .8) + 's');
+        heart.style.setProperty('--drift', (Math.random() * 70 - 35) + 'px');
+        heart.style.setProperty('--heart-color', heartColors[i % heartColors.length]);
+        heartBurst.appendChild(heart);
+      }
+      heartBurst.classList.remove('active');
+      void heartBurst.offsetWidth;
+      heartBurst.classList.add('active');
+    });
+    openButton.addEventListener('click', () => {
+      openButton.disabled = true;
+      introScreen.classList.add('casting');
+      const wizardScene = document.getElementById('wizardScene');
+      wizardScene.classList.add('active');
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const revealDelay = reducedMotion ? 1200 : 3000;
+      window.setTimeout(() => introScreen.classList.add('dismissed'), revealDelay);
+      window.setTimeout(() => wizardScene.classList.remove('active'), revealDelay + 800);
+      window.setTimeout(() => {
+        introScreen.hidden = true;
+        document.body.classList.remove('locked');
+        gift.setAttribute('aria-hidden', 'false');
+        window.scrollTo({top:0,behavior: reducedMotion ? 'auto' : 'smooth'});
+      }, revealDelay + 1200);
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
